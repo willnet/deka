@@ -1,5 +1,3 @@
-module Readme
-  module Tracker
-    VERSION = "0.0.1"
-  end
+module ReadmeTracker
+  VERSION = "0.0.1"
 end
