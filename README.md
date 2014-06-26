@@ -1,6 +1,8 @@
 # ReadmeTracker
 
-TODO: Write a gem description
+[![Build Status](https://travis-ci.org/willnet/readme_tracker.svg?branch=master)](https://travis-ci.org/willnet/readme_tracker)
+
+under development
 
 ## Installation
 
