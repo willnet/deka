@@ -17,7 +17,7 @@ class ReadmeTracker::Cli
   def run
     yaml = YAML.load(File.read(yaml_path))
     repository_name = yaml['repo'].split('/')[1]
-    system "git clone git@github.com:#{yaml['repo']}.git"
+    system "git clone https://github.com/#{yaml['repo']}.git"
 
     FileUtils.cd repository_name
     log = `git log --oneline README.md`
