@@ -2,7 +2,7 @@ require 'yaml'
 require 'fileutils'
 
 class ReadmeTracker::Cli
-  attr_accessor :yaml_path, :bash_hash
+  attr_accessor :yaml_path, :base_hash
 
   def self.run(config = {})
     new(config).run
