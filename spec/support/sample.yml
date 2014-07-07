@@ -1,1 +1,4 @@
-repo: 'willnet/readme_tracker'
+watching_repo: 'willnet/readme_tracker_watching_repo'
+issuing_repo: 'willnet/readme_tracker_issuing_repo'
+body: 'please respond'
+access_token: ''
