@@ -1,5 +1,6 @@
 require 'yaml'
 require 'fileutils'
+require 'octokit'
 
 class ReadmeTracker::Cli
   attr_accessor :yaml_path, :base_hash, :yaml
@@ -18,18 +19,31 @@ class ReadmeTracker::Cli
     @yaml = YAML.load(File.read(yaml_path))
   end
 
-  def run
-    repo = yaml['repo']
-    repository_name = repo.split('/')[1]
+  def watching_repo
+    yaml['watching_repo']
+  end
 
-    system "git clone https://github.com/#{repo}.git"
+  def issuing_repo
+    yaml['watching_repo']
+  end
+
+  def access_token
+    yaml['access_token']
+  end
+
+  def client
+    @client ||= Octokit::Client.new(access_token: access_token)
+  end
+
+  def run
+    repository_name = watching_repo.split('/')[1]
+
+    system "git clone https://github.com/#{watching_repo}.git"
 
     FileUtils.cd repository_name
     log = `git log --oneline README.md`
     all_hashes = log.each_line.map { |line| line.strip[0..6] }
     issue_hashes = all_hashes.take_while { |hash| hash != base_hash }
-
-    client = Octokit::Client.new(:access_token => "<your 40 char token>")
 
     issue_hashes.each do |issue_hash|
       title = "about #{issue_hash}"
@@ -38,11 +52,15 @@ class ReadmeTracker::Cli
              else
                "please respond \n\n#{issue_hash}"
              end
-      client.create_issue(repo, title, body, options = {})
+      client.create_issue(issuing_repo, title, body)
     end
 
     File.open(hash_path, 'w') do |file|
       file.print(issue_hashes.last)
+    end
+  ensure
+    if File.exist?(repository_name)
+      FileUtils.rm_r repository_name
     end
   end
 end
