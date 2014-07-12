@@ -40,8 +40,12 @@ class ReadmeTracker::Cli
 
     system "git clone https://github.com/#{watching_repo}.git"
 
-    FileUtils.cd repository_name
-    log = `git log --oneline README.md`
+    log = ''
+
+    FileUtils.cd repository_name do
+      log = `git log --oneline README.md`
+    end
+    
     all_hashes = log.each_line.map { |line| line.strip[0..6] }
     issue_hashes = all_hashes.take_while { |hash| hash != base_hash }
 
