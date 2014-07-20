@@ -3,7 +3,7 @@ require 'fileutils'
 require 'octokit'
 
 class ReadmeTracker::Cli
-  attr_accessor :yaml_path, :base_hash, :yaml
+  attr_accessor :yaml_path, :base_hash, :yaml, :hash_path
 
   def self.run(config = {})
     new(config).run
@@ -11,7 +11,7 @@ class ReadmeTracker::Cli
 
   def initialize(config)
     @yaml_path = config[:yaml_path] || './readme_tracker.yml'
-    hash_path = config[:hash_path] || './hash.txt'
+    @hash_path = config[:hash_path] || './hash.txt'
     @base_hash = File.read(hash_path).chomp
   end
 
@@ -24,7 +24,7 @@ class ReadmeTracker::Cli
   end
 
   def issuing_repo
-    yaml['watching_repo']
+    yaml['issuing_repo']
   end
 
   def access_token
@@ -45,9 +45,9 @@ class ReadmeTracker::Cli
     FileUtils.cd repository_name do
       log = `git log --oneline README.md`
     end
-    
+
     all_hashes = log.each_line.map { |line| line.strip[0..6] }
-    issue_hashes = all_hashes.take_while { |hash| hash != base_hash }
+    issue_hashes = all_hashes.take_while { |hash| hash != base_hash }.reverse
 
     issue_hashes.each do |issue_hash|
       title = "about #{issue_hash}"
@@ -60,7 +60,7 @@ class ReadmeTracker::Cli
     end
 
     File.open(hash_path, 'w') do |file|
-      file.print(issue_hashes.last)
+      file.write(issue_hashes.last)
     end
   ensure
     if File.exist?(repository_name)
