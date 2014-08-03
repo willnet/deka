@@ -31,40 +31,59 @@ class ReadmeTracker::Cli
     yaml['access_token']
   end
 
+  def directory_name
+    watching_repo.split('/')[1]
+  end
+
   def client
     @client ||= Octokit::Client.new(access_token: access_token)
   end
 
-  def run
-    repository_name = watching_repo.split('/')[1]
+  def issue_title(issue_hash)
+    "about #{issue_hash}"
+  end
 
+  def issue_body(issue_hash)
+    if yaml['body']
+      yaml['body'] + "\n\n#{issue_hash}"
+    else
+      "please respond \n\n#{issue_hash}"
+    end
+  end
+
+  def fetch_log
     system "git clone https://github.com/#{watching_repo}.git"
-
     log = ''
-
-    FileUtils.cd repository_name do
+    FileUtils.cd directory_name do
       log = `git log --oneline README.md`
     end
+    log
+  end
+
+  def update_lastest_hash(latest_hash)
+    File.open(hash_path, 'w') do |file|
+      file.write(latest_hash)
+    end
+  end
+
+  def delete_temp_repo
+    if File.exist?(directory_name)
+      FileUtils.rm_r directory_name
+    end
+  end
+
+  def run
+    log = fetch_log
 
     all_hashes = log.each_line.map { |line| line.strip[0..6] }
     issue_hashes = all_hashes.take_while { |hash| hash != base_hash }.reverse
 
     issue_hashes.each do |issue_hash|
-      title = "about #{issue_hash}"
-      body = if yaml['body']
-               yaml['body'] + "\n\n#{issue_hash}"
-             else
-               "please respond \n\n#{issue_hash}"
-             end
-      client.create_issue(issuing_repo, title, body)
+      client.create_issue(issuing_repo, issue_title(issue_hash), issue_body(issue_hash))
     end
 
-    File.open(hash_path, 'w') do |file|
-      file.write(issue_hashes.last)
-    end
+    update_lastest_hash(issue_hashes.last)
   ensure
-    if File.exist?(repository_name)
-      FileUtils.rm_r repository_name
-    end
+    delete_temp_repo
   end
 end
