@@ -1,5 +1,22 @@
 #!/usr/bin/env ruby
 
+$: << File.expand_path('../../lib', __FILE__)
+require 'bundler'
+Bundler.require
 require 'readme_tracker'
+require 'slop'
 
-ReadmeTracker::Cli.run
+opts = Slop.new(strict: true) do
+  banner 'Usage: readme_tracker [options]'
+  on 'dry-run', 'Dry run'
+  on 'c', 'yaml_path', 'config path (default `./readme_tracker.yml`)'
+  on 'o', 'hash_path', 'output hash path (default `./hash.txt`)'
+end
+
+begin
+  opts.parse
+  ReadmeTracker::Cli.run(opts.to_hash)
+rescue Slop::Error => e
+  puts e.message
+  puts opts # print help
+end

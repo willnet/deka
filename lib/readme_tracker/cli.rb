@@ -5,15 +5,37 @@ require 'octokit'
 class ReadmeTracker::Cli
   attr_accessor :yaml_path, :base_hash, :yaml, :hash_path
 
-  def self.run(config = {})
-    new(config).run
+  def self.run(options = {})
+    new(options).run
   end
 
-  def initialize(config)
-    @yaml_path = config[:yaml_path] || './readme_tracker.yml'
-    @hash_path = config[:hash_path] || './hash.txt'
+  def initialize(options = {})
+    @yaml_path = options[:yaml_path] || './readme_tracker.yml'
+    @hash_path = options[:hash_path] || './hash.txt'
     @base_hash = File.read(hash_path).chomp
+    @dry_run = options[:'dry-run']
   end
+
+  def run
+    log = fetch_log
+
+    all_hashes = log.each_line.map { |line| line.strip[0..6] }
+    issue_hashes = all_hashes.take_while { |hash| hash != base_hash }.reverse
+
+    issue_hashes.each do |issue_hash|
+      create_issue(issuing_repo, issue_hash)
+    end
+
+    update_lastest_hash(issue_hashes.last)
+  ensure
+    delete_temp_repo
+  end
+
+  def client
+    @client ||= Octokit::Client.new(access_token: access_token)
+  end
+
+  private
 
   def yaml
     @yaml = YAML.load(File.read(yaml_path))
@@ -33,10 +55,6 @@ class ReadmeTracker::Cli
 
   def directory_name
     watching_repo.split('/')[1]
-  end
-
-  def client
-    @client ||= Octokit::Client.new(access_token: access_token)
   end
 
   def issue_title(issue_hash)
@@ -60,30 +78,27 @@ class ReadmeTracker::Cli
     log
   end
 
-  def update_lastest_hash(latest_hash)
-    File.open(hash_path, 'w') do |file|
-      file.write(latest_hash)
+  def create_issue(repo, hash)
+    title = issue_title(hash)
+    body = issue_body(hash)
+    unless @dry_run
+      client.create_issue(repo, title, body)
     end
+    puts "created issue of #{hash}"
+  end
+
+  def update_lastest_hash(latest_hash)
+    unless @dry_run
+      File.open(hash_path, 'w') do |file|
+        file.write(latest_hash)
+      end
+    end
+    puts "updated #{hash_path} with #{latest_hash}"
   end
 
   def delete_temp_repo
     if File.exist?(directory_name)
       FileUtils.rm_r directory_name
     end
-  end
-
-  def run
-    log = fetch_log
-
-    all_hashes = log.each_line.map { |line| line.strip[0..6] }
-    issue_hashes = all_hashes.take_while { |hash| hash != base_hash }.reverse
-
-    issue_hashes.each do |issue_hash|
-      client.create_issue(issuing_repo, issue_title(issue_hash), issue_body(issue_hash))
-    end
-
-    update_lastest_hash(issue_hashes.last)
-  ensure
-    delete_temp_repo
   end
 end
