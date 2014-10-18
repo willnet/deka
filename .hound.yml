@@ -1,0 +1,5 @@
+StringLiterals:
+  # Valid values (denoting the preferred quote delimiters) are:
+  # single_quotes, double_quotes
+  EnforcedStyle: single_quotes
+  Enabled: true
