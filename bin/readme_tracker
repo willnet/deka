@@ -9,8 +9,8 @@ require 'slop'
 opts = Slop.new(strict: true) do
   banner 'Usage: readme_tracker [options]'
   on 'dry-run', 'Dry run'
-  on 'c', 'yaml_path', 'config path (default `./readme_tracker.yml`)'
-  on 'o', 'hash_path', 'output hash path (default `./hash.txt`)'
+  on 'c=', 'yaml_path', 'config path (default `./readme_tracker.yml`)'
+  on 'o=', 'hash_path', 'output hash path (default `./hash.txt`)'
 end
 
 begin
