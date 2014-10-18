@@ -13,10 +13,10 @@ describe ReadmeTracker::Cli do
         end
       end
 
-      it "should git clone its repository and write new hash to hash_path" do
+      it 'should git clone its repository and write new hash to hash_path' do
         cli = ReadmeTracker::Cli.new(yaml_path: yaml_path, hash_path: hash_path)
         expect(cli).to receive(:system).
-          with("git clone https://github.com/willnet/readme_tracker_watching_repo.git").
+          with('git clone https://github.com/willnet/readme_tracker_watching_repo.git').
           and_call_original
         expect(cli.client).to receive(:create_issue).
           with('willnet/readme_tracker_issuing_repo', 'about 670f679', "please respond\n\nhttps://github.com/willnet/readme_tracker_watching_repo/commit/670f67987f9616a020f91e00f146090617b06e8a")
@@ -35,7 +35,7 @@ describe ReadmeTracker::Cli do
             :'dry-run' => true
           )
           expect(cli).to receive(:system).
-            with("git clone https://github.com/willnet/readme_tracker_watching_repo.git").
+            with('git clone https://github.com/willnet/readme_tracker_watching_repo.git').
             and_call_original
           expect(cli.client).not_to receive(:create_issue)
           cli.run
