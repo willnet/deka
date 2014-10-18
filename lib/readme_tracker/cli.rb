@@ -19,7 +19,7 @@ class ReadmeTracker::Cli
   def run
     log = fetch_log
 
-    all_hashes = log.each_line.map { |line| line.strip[0..6] }
+    all_hashes = log.each_line.map { |line| line.strip[0..39] }
     issue_hashes = all_hashes.take_while { |hash| hash != base_hash }.reverse
 
     issue_hashes.each do |issue_hash|
@@ -58,14 +58,15 @@ class ReadmeTracker::Cli
   end
 
   def issue_title(issue_hash)
-    "about #{issue_hash}"
+    "about #{issue_hash[0..6]}"
   end
 
   def issue_body(issue_hash)
+    commit_url = "https://github.com/#{watching_repo}/commit/#{issue_hash}"
     if yaml['body']
-      yaml['body'] + "\n\n#{issue_hash}"
+      yaml['body'] + "\n\n#{commit_url}"
     else
-      "please respond \n\n#{issue_hash}"
+      "please respond \n\n#{commit_url}"
     end
   end
 
@@ -73,7 +74,7 @@ class ReadmeTracker::Cli
     system "git clone https://github.com/#{watching_repo}.git"
     log = ''
     FileUtils.cd directory_name do
-      log = `git log --oneline README.md`
+      log = `git log --pretty=oneline README.md`
     end
     log
   end

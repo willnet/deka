@@ -19,12 +19,12 @@ describe ReadmeTracker::Cli do
           with("git clone https://github.com/willnet/readme_tracker_watching_repo.git").
           and_call_original
         expect(cli.client).to receive(:create_issue).
-          with('willnet/readme_tracker_issuing_repo', 'about 670f679', "please respond\n\n670f679")
+          with('willnet/readme_tracker_issuing_repo', 'about 670f679', "please respond\n\nhttps://github.com/willnet/readme_tracker_watching_repo/commit/670f67987f9616a020f91e00f146090617b06e8a")
         expect(cli.client).to receive(:create_issue).
-          with('willnet/readme_tracker_issuing_repo', 'about ccd8832', "please respond\n\nccd8832")
+          with('willnet/readme_tracker_issuing_repo', 'about ccd8832', "please respond\n\nhttps://github.com/willnet/readme_tracker_watching_repo/commit/ccd88321b9cca4ceb24fdb09c3e338656c6300fa")
         cli.run
         new_hash_txt = File.read(hash_path)
-        expect(new_hash_txt).to eq 'ccd8832'
+        expect(new_hash_txt).to eq 'ccd88321b9cca4ceb24fdb09c3e338656c6300fa'
       end
 
       context 'and pass dry-run is true' do
@@ -40,7 +40,7 @@ describe ReadmeTracker::Cli do
           expect(cli.client).not_to receive(:create_issue)
           cli.run
           new_hash_txt = File.read(hash_path).chomp
-          expect(new_hash_txt).to eq '6ed23d8'
+          expect(new_hash_txt).to eq '6ed23d83705e2cf864cc2fa7d1307e0f8131b1b9'
         end
       end
     end
