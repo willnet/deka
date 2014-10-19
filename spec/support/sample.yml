@@ -1,3 +1,4 @@
+watching_files: 'README.md'
 watching_repo: 'willnet/readme_tracker_watching_repo'
 issuing_repo: 'willnet/readme_tracker_issuing_repo'
 body: 'please respond'
