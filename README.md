@@ -2,7 +2,11 @@
 
 [![Build Status](https://travis-ci.org/willnet/readme_tracker.svg?branch=master)](https://travis-ci.org/willnet/readme_tracker)
 
-ReadmeTracker provides `readme_tracker` command which track README.md and write github issues if new commits detected.
+ReadmeTracker provides `readme_tracker` command which track files (ex: README.md) and write github issues if new commits detected. It is useful to translate documents on github and keep them fresh.
+
+### examples of use
+
+- [willnet/capybara-readme-ja](https://github.com/willnet/capybara-readme-ja)
 
 ## Installation
 
@@ -20,16 +24,26 @@ Or install it yourself as:
 
 ## Usage
 
-* requirement: git command
-* You should create `./readme_tracker.yml` and write settings.
-
-example
+* requirement: `git` command
+* You should create a config file (ex: `./readme_tracker.yml`) and write settings.
+* Use `readme_tracker` command to watch `watching_repo` and write issues to `issuing_repo`. If you don't want to watch all commits, write a commit hash to `.tracked_hash`, readme_tracker doesn't write issues prior to the commit hash.
+* `.tracked_hash` if automatically updated by `readme_tracker` command
 
 ```
+Usage: readme_tracker [options]
+        --dry-run      Dry run
+    -c, --config       config path (default `./readme_tracker.yml`)
+    -s, --save         path for saving tracked hash (default `./.tracked_hash`)
+```
+
+### config file example
+
+```
+watching_files: 'README.md'
 watching_repo: 'willnet/readme_tracker_watching_repo'
 issuing_repo: 'willnet/readme_tracker_issuing_repo'
 body: 'please respond'
-access_token: 'YOUR_GITHUB_ACCESS_TOKEN'
+access_token: YOUR_GITHUB_ACCESS_TOKEN
 ```
 
 ## Contributing
