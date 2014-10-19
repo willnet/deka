@@ -41,6 +41,10 @@ class ReadmeTracker::Cli
     @yaml = YAML.load(File.read(yaml_path))
   end
 
+  def watching_files
+    yaml['watching_files'] || 'README.md'
+  end
+
   def watching_repo
     yaml['watching_repo']
   end
@@ -74,7 +78,7 @@ class ReadmeTracker::Cli
     system "git clone https://github.com/#{watching_repo}.git"
     log = ''
     FileUtils.cd directory_name do
-      log = `git log --pretty=oneline README.md`
+      log = `git log --pretty=oneline #{watching_files}`
     end
     log
   end
