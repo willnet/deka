@@ -3,16 +3,16 @@ require 'fileutils'
 require 'octokit'
 
 class ReadmeTracker::Cli
-  attr_accessor :yaml_path, :base_hash, :yaml, :hash_path
+  attr_accessor :config, :base_hash, :yaml, :save_file
 
   def self.run(options = {})
     new(options).run
   end
 
   def initialize(options = {})
-    @yaml_path = options[:yaml_path] || './readme_tracker.yml'
-    @hash_path = options[:hash_path] || './hash.txt'
-    @base_hash = File.read(hash_path).chomp
+    @config = options[:config] || './readme_tracker.yml'
+    @save_file = options[:save] || './.tracked_hash'
+    @base_hash = File.read(save_file).chomp
     @dry_run = options[:'dry-run']
   end
 
@@ -38,7 +38,7 @@ class ReadmeTracker::Cli
   private
 
   def yaml
-    @yaml = YAML.load(File.read(yaml_path))
+    @yaml = YAML.load(File.read(config))
   end
 
   def watching_files
@@ -94,11 +94,11 @@ class ReadmeTracker::Cli
 
   def update_lastest_hash(latest_hash)
     unless @dry_run
-      File.open(hash_path, 'w') do |file|
+      File.open(save_file, 'w') do |file|
         file.write(latest_hash)
       end
     end
-    puts "updated #{hash_path} with #{latest_hash}"
+    puts "updated #{save_file} with #{latest_hash}"
   end
 
   def delete_temp_repo
