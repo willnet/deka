@@ -2,7 +2,7 @@ require 'yaml'
 require 'fileutils'
 require 'octokit'
 
-class ReadmeTracker::Cli
+class Deka::Cli
   attr_accessor :config, :base_hash, :yaml, :save_file
 
   def self.run(options = {})
@@ -10,7 +10,7 @@ class ReadmeTracker::Cli
   end
 
   def initialize(options = {})
-    @config = options[:config] || './readme_tracker.yml'
+    @config = options[:config] || './deka.yml'
     @save_file = options[:save] || './.tracked_hash'
     @base_hash = File.read(save_file).chomp
     @dry_run = options[:'dry-run']

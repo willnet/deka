@@ -1,16 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'readme_tracker/version'
+require 'deka/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'readme_tracker'
-  spec.version       = ReadmeTracker::VERSION
+  spec.name          = 'deka'
+  spec.version       = Deka::VERSION
   spec.authors       = ['willnet']
   spec.email         = ['netwillnet@gmail.com']
   spec.summary       = %q{tracking commit of README}
   spec.description   = %q{tracking commit of README}
-  spec.homepage      = 'https://github.com/willnet/readme_tracker'
+  spec.homepage      = 'https://github.com/willnet/deka'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")

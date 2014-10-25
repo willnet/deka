@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ReadmeTracker::Cli do
+describe Deka::Cli do
   describe '#run' do
     context 'when pass config and save_file as argument' do
       let(:config) { File.expand_path('../support/sample.yml', __FILE__) }
@@ -14,7 +14,7 @@ describe ReadmeTracker::Cli do
       end
 
       it 'should git clone its repository and write new hash to save_file' do
-        cli = ReadmeTracker::Cli.new(config: config, save: save_file)
+        cli = Deka::Cli.new(config: config, save: save_file)
         expect(cli).to receive(:system).
           with('git clone https://github.com/willnet/readme_tracker_watching_repo.git').
           and_call_original
@@ -29,7 +29,7 @@ describe ReadmeTracker::Cli do
 
       context 'and pass dry-run is true' do
         it 'should dry run' do
-          cli = ReadmeTracker::Cli.new(
+          cli = Deka::Cli.new(
             config: config,
             save: save_file,
             :'dry-run' => true
