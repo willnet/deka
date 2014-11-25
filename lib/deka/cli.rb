@@ -38,6 +38,13 @@ class Deka::Cli
   private
 
   def yaml
+    return @yaml if @yaml
+
+    unless File.exists?(config)
+      puts "You don't have config file(default './deka.yml')"
+      exit 1
+    end
+
     @yaml = YAML.load(File.read(config))
   end
 
