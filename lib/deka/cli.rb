@@ -12,7 +12,7 @@ class Deka::Cli
   def initialize(options = {})
     @config = options[:config] || './deka.yml'
     @save_file = options[:save] || './.tracked_hash'
-    @base_hash = File.read(save_file).chomp
+    @base_hash = File.exists?(save_file) && File.read(save_file).chomp
     @dry_run = options[:'dry-run']
   end
 
