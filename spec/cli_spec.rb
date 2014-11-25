@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Deka::Cli do
   describe '#run' do
     context 'when pass config and save_file as argument' do
-      let(:config) { File.expand_path('../support/sample.yml', __FILE__) }
-      let(:save_file) { File.expand_path('../support/.tracked_hash', __FILE__) }
+      let(:config) { './spec/support/sample.yml' }
+      let(:save_file) { './spec/support/.tracked_hash' }
       let!(:old_hash_txt) { File.read(save_file) }
 
       after do
