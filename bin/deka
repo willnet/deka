@@ -6,15 +6,19 @@ Bundler.require
 require 'deka'
 require 'slop'
 
-opts = Slop.new(strict: true) do
-  banner 'Usage: deka [options]'
-  on 'dry-run', 'Dry run'
-  on 'c=', 'config', 'config path (default `./deka.yml`)'
-  on 's=', 'save', 'path for saving tracked hash (default `./.tracked_hash`)'
+opts = Slop.parse do |o|
+  o.banner = 'Usage: deka [options]'
+  o.bool '--dry-run', 'Dry run'
+  o.string 'c=', 'config', 'config path (default `./deka.yml`)'
+  o.string 's=', 'save', 'path for saving tracked hash (default `./.tracked_hash`)'
+
+  o.on '-h', '--help', 'show this messages' do
+    puts o
+    exit
+  end
 end
 
 begin
-  opts.parse
   Deka::Cli.run(opts.to_hash)
 rescue Slop::Error => e
   puts e.message
