@@ -15,13 +15,13 @@ describe Deka::Cli do
 
       it 'should git clone its repository and write new hash to save_file' do
         cli = Deka::Cli.new(config: config, save: save_file)
-        expect(cli).to receive(:system).
-          with('git clone https://github.com/willnet/readme_tracker_watching_repo.git').
-          and_call_original
-        expect(cli.client).to receive(:create_issue).
-          with('willnet/readme_tracker_issuing_repo', 'about 670f679', "please respond\n\nhttps://github.com/willnet/readme_tracker_watching_repo/commit/670f67987f9616a020f91e00f146090617b06e8a")
-        expect(cli.client).to receive(:create_issue).
-          with('willnet/readme_tracker_issuing_repo', 'about ccd8832', "please respond\n\nhttps://github.com/willnet/readme_tracker_watching_repo/commit/ccd88321b9cca4ceb24fdb09c3e338656c6300fa")
+        expect(cli).to receive(:system)
+          .with('git clone https://github.com/willnet/readme_tracker_watching_repo.git')
+          .and_call_original
+        expect(cli.client).to receive(:create_issue)
+          .with('willnet/readme_tracker_issuing_repo', 'about 670f679', "please respond\n\nhttps://github.com/willnet/readme_tracker_watching_repo/commit/670f67987f9616a020f91e00f146090617b06e8a")
+        expect(cli.client).to receive(:create_issue)
+          .with('willnet/readme_tracker_issuing_repo', 'about ccd8832', "please respond\n\nhttps://github.com/willnet/readme_tracker_watching_repo/commit/ccd88321b9cca4ceb24fdb09c3e338656c6300fa")
         cli.run
         new_hash_txt = File.read(save_file)
         expect(new_hash_txt).to eq 'ccd88321b9cca4ceb24fdb09c3e338656c6300fa'
@@ -32,11 +32,11 @@ describe Deka::Cli do
           cli = Deka::Cli.new(
             config: config,
             save: save_file,
-            :'dry-run' => true
+            'dry-run': true
           )
-          expect(cli).to receive(:system).
-            with('git clone https://github.com/willnet/readme_tracker_watching_repo.git').
-            and_call_original
+          expect(cli).to receive(:system)
+            .with('git clone https://github.com/willnet/readme_tracker_watching_repo.git')
+            .and_call_original
           expect(cli.client).not_to receive(:create_issue)
           cli.run
           new_hash_txt = File.read(save_file).chomp
